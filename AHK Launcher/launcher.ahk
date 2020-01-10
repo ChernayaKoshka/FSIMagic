@@ -8,7 +8,7 @@ activeFsiPid := 0
     }
     else
     {
-        toRun := COMSPEC . " /Q /K dotnet fsi --shadowcopyreferences+"
+        toRun := COMSPEC . " /Q /K fsi --shadowcopyreferences+"
 
         useFiles := ""
         Loop, Files, % A_MyDocuments "\FSI Scripts\*.fsx", F
