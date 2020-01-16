@@ -110,8 +110,7 @@ let execRead (args : string) (path : string) =
     if not <| File.Exists(path) then
         Error (sprintf "Could not find file \"%s\"" path)
     else
-        let startInfo = ProcessStartInfo()
-        startInfo.FileName <- path
+        let startInfo = ProcessStartInfo(path)
         startInfo.Arguments <- args
         startInfo.UseShellExecute <- false
         startInfo.RedirectStandardOutput <- true
@@ -183,12 +182,27 @@ let cmd command =
     else
         execRead (sprintf "/Q /C %s" command) vars.ComSpec
 
+let ps command =
+    execRead (sprintf "-Command %s" command) @"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
+
 let notify (str : string) =
     Console.ForegroundColor <- ConsoleColor.Green
     Console.WriteLine(str)
     Console.ForegroundColor <- ConsoleColor.White
 
 let cls() = Console.Clear()
+
+// DIRECTORY STUFF
+
+let rec findFilesInDir regex dir =
+    [| 
+        for file in getFilesIn dir do
+            if Regex.IsMatch(file, regex) then
+                yield file
+        yield!
+            Directory.GetDirectories(dir)
+            |> Array.collect (findFilesInDir regex)
+    |]
 
 let cd str = 
     Directory.SetCurrentDirectory(str)
