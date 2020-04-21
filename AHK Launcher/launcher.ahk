@@ -2,9 +2,16 @@
 
 activeFsiPid := 0
 !`::
+    if ((!activeFsiPid or !WinExist("ahk_pid" . activeFsiPid)) and WinExist("ahk_exe fsi.exe"))
+        WinGet, activeFsiPid, PID, % "ahk_exe fsi.exe"
+
     if (activeFsiPid and WinExist("ahk_pid" . activeFsiPid))
     {
+        path := Explorer_GetPath()
         WinActivate, % "ahk_pid" . activeFsiPid
+        WinWaitActive, % "ahk_pid" . activeFsiPid
+        if (path != "ERROR")
+            SendInput, % "cd @""" . path . """;;{ENTER}"
     }
     else
     {
